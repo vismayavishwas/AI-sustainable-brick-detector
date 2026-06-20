@@ -69,4 +69,4 @@ While the system successfully classifies specimens, specific engineering depende
 * **Department**: Electronics and Communication Engineering
 * **Course**: Interdisciplinary Project Based Learning (2nd Semester)
 
-**Supervised by**: Prof. Nirmala Y.N of Electronics and COmmunications Department and Prof. Vidyashree J.C of Civil Department.
+**Supervised by**: Prof. Nirmala Y.N of Electronics and Communications Department and Prof. Vidyashree J.C of Civil Department.
