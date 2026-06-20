@@ -1,48 +1,56 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import joblib
+from sklearn.ensemble import RandomForestClassifier
 
-# Load data
+# Load dataset
 data = pd.read_csv("dataset.csv", comment="#")
 
-# Load model
+# Load trained model
 model = joblib.load("brick_model.pkl")
 
-# Feature importance
+# Features
+X = data[['peak', 'energy', 'decay_time']]
+y = data['label']
+
+# -------------------------
+# 1. FEATURE IMPORTANCE
+# -------------------------
+
 importance = model.feature_importances_
 
 features = [
-    "Peak",
-    "Energy",
-    "Decay Time",
-    "Stability"
+    'Peak',
+    'Energy',
+    'Decay Time'
 ]
 
-# GRAPH 1
 plt.figure(figsize=(7,5))
 plt.bar(features, importance)
-plt.title("Feature Importance")
+plt.title("Feature Importance in Random Forest")
 plt.ylabel("Importance Score")
-plt.savefig("feature_importance.png")
-plt.close()
+plt.show()
 
-# GRAPH 2
+# -------------------------
+# 2. CLASS DISTRIBUTION
+# -------------------------
+
 plt.figure(figsize=(6,6))
-data['label'].value_counts().plot(
-    kind='pie',
-    autopct='%1.1f%%'
-)
-plt.title("Class Distribution")
+y.value_counts().plot(kind='pie', autopct='%1.1f%%')
+plt.title("Dataset Class Distribution")
 plt.ylabel("")
-plt.savefig("class_distribution.png")
-plt.close()
+plt.show()
 
-# GRAPH 3
+# -------------------------
+# 3. PEAK VS ENERGY
+# -------------------------
+
+labels = data['label'].unique()
+
 plt.figure(figsize=(7,5))
 
-for label in data['label'].unique():
+for label in labels:
     subset = data[data['label'] == label]
-
     plt.scatter(
         subset['peak'],
         subset['energy'],
@@ -51,10 +59,6 @@ for label in data['label'].unique():
 
 plt.xlabel("Peak")
 plt.ylabel("Energy")
-plt.title("Peak vs Energy")
+plt.title("Peak vs Energy Classification")
 plt.legend()
-
-plt.savefig("peak_vs_energy.png")
-plt.close()
-
-print("Graphs saved")
+plt.show()
