@@ -1,47 +1,60 @@
 import serial
 import joblib
 import pandas as pd
+import time
 
+# Load trained model
 model = joblib.load("brick_model.pkl")
 
-ser = serial.Serial("COM3", 115200)
+# Connect to Arduino
+ser = serial.Serial("COM3", 115200, timeout=1)
 
-print("AI READY 🔥")
+# Give Arduino time to reset
+time.sleep(3)
+
+# clear startup message
+ser.reset_input_buffer()
+
+print("AI READY")
+input("Press Enter to START testing...")
+time.sleep(1)
+ser.write(b's\n')
+print("START command sent")
 
 while True:
 
-    line = ser.readline().decode().strip()
+    try:
+        line = ser.readline().decode(errors="ignore").strip()
 
-    print(line)
+        if line:
+            print(line)
 
-    if line.startswith("FINAL"):
+        if line.startswith("FINAL"):
 
-        try:
-            _, peak, energy, decay, stability = line.split(",")
+            _, peak, energy, decay_time = line.split(",")
 
             peak = float(peak)
             energy = float(energy)
-            decay = float(decay)
-            stability = float(stability)
+            decay_time = float(decay_time)
 
-            X = pd.DataFrame([[
-                peak,
-                energy,
-                decay,
-                stability
-            ]],
-            columns=[
-                'peak',
-                'energy',
-                'decay_time',
-                'stability'
-            ])
+            X = pd.DataFrame(
+                [[peak, energy, decay_time]],
+                columns=[
+                    "peak",
+                    "energy",
+                    "decay_time"
+                ]
+            )
 
             prediction = model.predict(X)[0]
 
-            print("Prediction:", prediction)
+            print("\nPrediction:", prediction)
 
+            # Send prediction back to Arduino
             ser.write((prediction + "\n").encode())
 
-        except Exception as e:
-            print("Error:", e)
+            print("Prediction sent to Arduino")
+
+    except Exception as e:
+        print("Error:", e)
+        
