@@ -6,7 +6,7 @@ import joblib
 data = pd.read_csv("dataset.csv", comment="#")
 
 # Features
-X = data[['peak', 'energy', 'decay_time', 'stability']]
+X = data[['peak', 'energy', 'decay_time']]
 
 # Labels
 y = data['label']
